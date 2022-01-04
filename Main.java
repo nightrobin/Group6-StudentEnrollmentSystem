@@ -1,0 +1,163 @@
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+
+
+public class Main extends Application {
+	
+	Scene studentscene, adminscene;
+	Hyperlink studentlink, adminlink;
+	TextField studentnumberfield, adminuserfield;
+	PasswordField passwordfield;
+	
+	public GridPane Topgrid(Stage primaryStage) { // changes the scene between the 
+		GridPane topgrid = new GridPane();		// student and admin login
+		topgrid.setAlignment(Pos.CENTER);
+		topgrid.setHgap(40);
+		
+		studentlink = new Hyperlink("Student");
+		topgrid.add(studentlink, 0, 0);
+		GridPane.setHalignment(studentlink, HPos.CENTER);
+
+		adminlink = new Hyperlink("Admin");
+		topgrid.add(adminlink, 1, 0);
+		GridPane.setHalignment(adminlink, HPos.CENTER);
+		
+		adminlink.setOnAction(e -> {
+			primaryStage.setScene(adminscene);
+		});
+		
+		studentlink.setOnAction(e -> {
+			primaryStage.setScene(studentscene);
+		});
+		
+		return topgrid;
+	}
+	
+	public void Startup(Stage primaryStage) {
+		BorderPane studentborder = new BorderPane();
+		GridPane studentgrid = new GridPane();
+		studentgrid.setAlignment(Pos.CENTER);
+		studentgrid.setHgap(20);
+		studentgrid.setVgap(20);
+		
+		Label studentnumber = new Label("Student Number: ");
+		studentgrid.add(studentnumber, 0, 0);
+		
+		studentnumberfield = new TextField();
+		studentnumberfield.setPromptText("ie. 2016xxxxx");
+		studentnumberfield.setMinWidth(250);
+		studentgrid.add(studentnumberfield, 1, 0);
+		
+		studentnumberfield.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.matches("\\d{0,9}")) {
+                	studentnumberfield.setText(oldValue);
+                }
+            }
+        });
+		
+		Button studentBtn = new Button("Enroll/Login");
+		studentgrid.add(studentBtn, 0, 2, 2, 1);
+		GridPane.setHalignment(studentBtn, HPos.CENTER);
+		
+		studentBtn.setOnAction(e -> {
+			if (studentnumberfield.getText().length() == 9) {
+				Boolean infile = false;
+				
+				try {
+					Scanner scanner = new Scanner(new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentdata.dat"));
+					StringBuffer buffer = new StringBuffer();
+					
+					while (scanner.hasNextLine()) {
+						buffer.append(scanner.nextLine() + System.lineSeparator());
+					}
+					String fileContents = buffer.toString();
+					scanner.close();
+					
+					FileWriter filewriter = new FileWriter("src\\main\\java\\application\\enrollmentintellij_idea\\studentdata.dat");
+					PrintWriter output = new PrintWriter(filewriter);
+					
+					if (!fileContents.replaceAll("[^0-9a-zA-Z]", "").matches("")) {
+						output.println(fileContents);
+					}
+					
+					if (fileContents.contains(studentnumberfield.getText())) {
+						infile = true;
+					}
+					
+					output.flush();
+					output.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+				primaryStage.close();
+				
+				if (infile == true) {
+					DocumentSubmission.documentsubmissionmenu(studentnumberfield.getText());
+				} else {
+					EnrollmentForm.enrollmentMenu(studentnumberfield.getText());
+				}
+			}
+			
+		});
+		
+		studentborder.setTop(Topgrid(primaryStage));
+		studentborder.setCenter(studentgrid);
+		studentscene = new Scene(studentborder, 400, 200);
+		
+		BorderPane adminborder = new BorderPane();
+		GridPane admingrid = new GridPane();
+		admingrid.setAlignment(Pos.CENTER);
+		admingrid.setHgap(40);
+		admingrid.setVgap(20);
+		
+		Label adminuser = new Label("Admin User:");
+		admingrid.add(adminuser, 0, 0);
+		
+		adminuserfield = new TextField();
+		adminuserfield.setPromptText("username");
+		adminuserfield.setMinWidth(250);
+		admingrid.add(adminuserfield, 1, 0);
+		
+		Label password = new Label("Admin Password:");
+		admingrid.add(password, 0, 1);
+		
+		passwordfield = new PasswordField();
+		passwordfield.setPromptText("password");
+		passwordfield.setMinWidth(250);
+		admingrid.add(passwordfield, 1, 1);
+		
+		Button adminBtn = new Button("Login");
+		admingrid.add(adminBtn, 0, 2, 2, 1);
+		GridPane.setHalignment(adminBtn, HPos.CENTER);
+		
+		adminBtn.setOnAction(e -> {
+			//testoutput.test();
+			//primaryStage.close();
+			//EnrollmentForm.enrollmentMenu(studentnumberfield.getText());
+		});
+		
+		adminborder.setTop(Topgrid(primaryStage));
+		adminborder.setCenter(admingrid);
+		adminscene = new Scene(adminborder, 400, 200);
+		
+		primaryStage.setScene(studentscene);
+		primaryStage.show();
+	}
+	
+	@Override
+	public void start(Stage primaryStage) {
+		Startup(primaryStage);
+	}
+	
+	public static void main(String[] args) {
+		launch(args);
+	}
+}
