@@ -1,0 +1,70 @@
+package application.enrollmentintellij_idea;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+public class Schedule {
+	
+	public static void display(String coursegiven) {
+		Stage primaryStage = new Stage();
+		primaryStage.initModality(Modality.APPLICATION_MODAL);
+		
+		GridPane grid = new GridPane();
+		grid.setAlignment(Pos.TOP_CENTER);
+		grid.setHgap(30);
+		grid.setVgap(5);
+		grid.setPadding(new Insets(10, 10, 10, 10));
+		
+		try {
+			File file = new File("src\\main\\java\\application\\enrollmentintellij_idea\\schedule.txt");
+			Scanner scanner = new Scanner(file);
+			while(scanner.hasNextLine()) {
+				String temp = scanner.nextLine();
+				if (temp.equals(coursegiven)) {
+					Label course = new Label(temp);
+					grid.add(course, 0, 0, 2, 1);
+					GridPane.setHalignment(course, HPos.CENTER);
+					course.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 13));
+					
+					for (int x = 1; x < 21; x += 3) {
+						Label line = new Label("------------------------------------");
+						grid.add(line, 0, x, 2, 1);
+						GridPane.setHalignment(line, HPos.CENTER);
+						Label subject = new Label(scanner.nextLine());
+						grid.add(subject, 0, x + 1, 1, 2);
+						GridPane.setHalignment(subject, HPos.LEFT);
+						GridPane.setValignment(subject, VPos.CENTER);
+						Label time1 = new Label(scanner.nextLine());
+						grid.add(time1, 1, x + 1);
+						Label time2 = new Label(scanner.nextLine());
+						grid.add(time2, 1, x + 2);
+					}
+					break;
+				}
+			}
+			
+			scanner.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		Scene scene = new Scene(grid, 550, 520);
+		primaryStage.setResizable(false);
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("Course Schedule");
+		primaryStage.showAndWait();
+	}
+}
