@@ -1,0 +1,138 @@
+public class Assessment {
+	public static void display() {
+		Stage primaryStage = new Stage();
+		primaryStage.initModality(Modality.APPLICATION_MODAL);
+		
+		GridPane grid = new GridPane();
+		grid.setAlignment(Pos.TOP_LEFT);
+		grid.setHgap(50);
+		grid.setVgap(5);
+		grid.setPadding(new Insets(10, 10, 10, 10));
+		
+		Label tuitionfee = new Label("TUITION FEE");
+		tuitionfee.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 13));
+		grid.add(tuitionfee, 0, 0);
+		Label description1 = new Label("Description");
+		grid.add(description1, 0, 1);
+		Label amounts1 = new Label("Amount");
+		grid.add(amounts1, 1, 1);
+		description1.setUnderline(true);
+		amounts1.setUnderline(true);
+		Label text1 = new Label("Tuition Fee (24.00 Units)");
+		grid.add(text1, 0, 2);
+		Label amount1 = new Label("7,032.00");
+		grid.add(amount1, 1, 2);
+		Label total1 = new Label("7,032.00");
+		total1.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 12));
+		grid.add(total1, 1, 3);
+		
+		Label miscellaneousfee = new Label("MISCELLANEOUS FEE");
+		miscellaneousfee.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 13));
+		grid.add(miscellaneousfee, 0, 5);
+		Label description2 = new Label("Description");
+		grid.add(description2, 0, 6);
+		Label amounts2 = new Label("Amount");
+		grid.add(amounts2, 1, 6);
+		description2.setUnderline(true);
+		amounts2.setUnderline(true);
+		Label text2 = new Label("Cultural Activity");
+		grid.add(text2, 0, 7);
+		Label amount2 = new Label("74.00");
+		grid.add(amount2, 1, 7);
+		Label text3 = new Label("Library Fee");
+		grid.add(text3, 0, 8);
+		Label amount3 = new Label("732.00");
+		grid.add(amount3, 1, 8);
+		Label text4 = new Label("Medical/Dental Fee");
+		grid.add(text4, 0, 9);
+		Label amount4 = new Label("293.00");
+		grid.add(amount4, 1, 9);
+		Label text5 = new Label("Guidance Fee");
+		grid.add(text5, 0, 10);
+		Label amount5 = new Label("146.00");
+		grid.add(amount5, 1, 10);
+		Label text6 = new Label("Athletic Fee with PE");
+		grid.add(text6, 0, 11);
+		Label amount6 = new Label("293.00");
+		grid.add(amount6, 1, 11);
+		Label text7 = new Label("Student Welfare");
+		grid.add(text7, 0, 12);
+		Label amount7 = new Label("74.00");
+		grid.add(amount7, 1, 12);
+		Label text8 = new Label("Registration Fee");
+		grid.add(text8, 0, 13);
+		Label amount8 = new Label("74.00");
+		grid.add(amount8, 1, 13);
+		Label total2 = new Label("1,686.00");
+		total2.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 12));
+		grid.add(total2, 1, 14);
+		
+		Label laboratoryfee = new Label("LABORATORY FEE");
+		laboratoryfee.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 13));
+		grid.add(laboratoryfee, 0, 16);
+		Label description3 = new Label("Description");
+		grid.add(description3, 0, 17);
+		Label amounts3 = new Label("Amount");
+		grid.add(amounts3, 1, 17);
+		description3.setUnderline(true);
+		amounts3.setUnderline(true);
+		Label text9 = new Label("All Other Subjects with Laboratory");
+		grid.add(text9, 0, 18);
+		Label amount9 = new Label("438.00");
+		grid.add(amount9, 1, 18);
+		Label text10 = new Label("Computer Subject with Hans-On/Thesis");
+		grid.add(text10, 0, 19);
+		Label amount10 = new Label("1170.00");
+		grid.add(amount10, 1, 19);
+		Label total3 = new Label("1,608.00");
+		total3.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 12));
+		grid.add(total3, 1, 20);
+		
+		Label otherfee = new Label("OTHER FEE");
+		otherfee.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 13));
+		grid.add(otherfee, 0, 22);
+		Label description4 = new Label("Description");
+		grid.add(description4, 0, 23);
+		Label amounts4 = new Label("Amount");
+		grid.add(amounts4, 1, 23);
+		description4.setUnderline(true);
+		amounts4.setUnderline(true);
+		Label text11 = new Label("Development Fund");
+		grid.add(text11, 0, 24);
+		Label amount11 = new Label("146.00");
+		grid.add(amount11, 1, 24);
+		Label text112 = new Label("Ang Pamantasan Fee");
+		grid.add(text112, 0, 25);
+		Label amount12 = new Label("50.00");
+		grid.add(amount12, 1, 25);
+		Label text13 = new Label("Supreme Student Council");
+		grid.add(text13, 0, 26);
+		Label amount13 = new Label("50.00");
+		grid.add(amount13, 1, 26);
+		Label total4 = new Label("246.00");
+		total4.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 12));
+		grid.add(total4, 1, 27);
+		Label totalamount = new Label("Total Amount");
+		totalamount.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 12));
+		grid.add(totalamount, 0, 28);
+		Label total5 = new Label("10,572.00");
+		total5.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 12));
+		grid.add(total5, 1, 28);
+		
+		BorderPane status = new BorderPane();
+		Label statustext = new Label("Your Status:\n"
+				+ "Paying:\n"
+				+ "Covered by\n"
+				+ "CHED Unifast\n"
+				+ "(RA 10931)");
+		statustext.setFont(Font.font("System Regular", FontWeight.BOLD, FontPosture.REGULAR, 13));
+		status.setCenter(statustext);
+		grid.add(status, 2, 1, 1, 5);
+
+		Scene scene = new Scene(grid, 500, 650);
+		primaryStage.setResizable(false);
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("Assessment Form");
+		primaryStage.showAndWait();
+	}
+}
