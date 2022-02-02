@@ -1,0 +1,285 @@
+package application.enrollmentintellij_idea;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Scanner;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+public class DocumentSubmission {
+
+	static String namedata, addressdata, birthdaydata, emaildata, contactnumberdata, firstchoicedata, secondchoicedata, aveJHSdata, aveSHSdata;
+	
+	public static void dataretrival(String studentnumber) {
+		try {
+			File file = new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentdata.dat");
+			Scanner scanner = new Scanner(file);
+			
+			while (scanner.hasNext()) {
+				if (scanner.nextLine().equals(studentnumber)) {
+					namedata = scanner.nextLine();
+					addressdata = scanner.nextLine();
+					birthdaydata = scanner.nextLine();
+					emaildata = scanner.nextLine();
+					contactnumberdata = scanner.nextLine();
+					firstchoicedata = scanner.nextLine();
+					secondchoicedata = scanner.nextLine();
+					aveJHSdata = scanner.nextLine();
+					aveSHSdata = scanner.nextLine();
+				}
+			}
+			scanner.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	static File newfile;
+	
+	public static String getfile(String studentnumber) {
+		FileChooser fc = new FileChooser();
+		fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+		File file = fc.showOpenDialog(null);
+		String filename = null;
+		
+		if (file != null) {
+			filename = file.getName();
+			newfile = new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumber + "\\" + file.getName());
+			
+			FileInputStream inputfile = null;
+			FileOutputStream outputfile = null;
+			
+			try {
+				inputfile = new FileInputStream(file);
+				outputfile = new FileOutputStream(newfile);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			int i = 0;
+			try {
+				while ((i = inputfile.read()) != -1) {
+					outputfile.write(i);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			finally {
+				if (inputfile != null) {
+					try {
+						outputfile.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if (outputfile != null) {
+					try {
+						inputfile.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return filename;
+	}
+	
+	static Label birthcertstatus = new Label();
+	static Label form137status = new Label();
+	static Label birthcertname = new Label();
+	static Label form137name = new Label();
+	static Button addfile, addfile2;
+	static Boolean enrolled = false;
+	static String coursegiven = new String();
+	
+	public static void documentation(String tochange, String studentnumber, String filename) {
+		if (tochange == "0") {
+			try {
+				File file = new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumber + "\\documentation.dat");
+				if (file.createNewFile()) {
+					FileWriter filewriter = new FileWriter(file);
+					PrintWriter output = new PrintWriter(filewriter);
+					
+					output.println("null");
+					output.println("No File Submitted");
+					output.println("null");
+					output.println("No File Submitted");
+					output.print("null");
+					
+					output.flush();
+					output.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				Scanner scanner = new Scanner(new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumber + "\\documentation.dat"));
+				String birthcert = scanner.nextLine();
+				String status1 = scanner.nextLine();
+				String form137 = scanner.nextLine();
+				String status2 = scanner.nextLine();
+				coursegiven = scanner.nextLine();
+				
+				if (status1.equals("Accepted") && status2.equals("Accepted")) {enrolled = true;}
+				
+				if (status1.equals("Accepted")) {addfile.setDisable(true);}
+				
+				if (status2.equals("Accepted")) {addfile2.setDisable(true);} 
+				
+				scanner.close();
+				
+				File file = new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumber + "\\documentation.dat");
+				FileWriter filewriter = new FileWriter(file);
+				PrintWriter output = new PrintWriter(filewriter);
+				if (filename != null || filename != "null") {
+					if (tochange == "1") {
+						Files.deleteIfExists(Paths.get("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumber + "\\" + birthcert));
+						birthcert = filename;
+						status1 = "Not Verified";
+					} else if (tochange == "2") {
+						Files.deleteIfExists(Paths.get("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumber + "\\" + form137));
+						form137 = filename;
+						status2 = "Not Verified";
+					}
+				}
+				
+				if (tochange == "3") {
+					birthcertstatus.setText(status1);
+					birthcertname.setText(birthcert);
+				} else if (tochange == "4") {
+					form137status.setText(status2);
+					form137name.setText(form137);
+				}
+				
+				output.println(birthcert);
+				output.println(status1);
+				output.println(form137);
+				output.println(status2);
+				output.print(coursegiven);				
+				
+				output.flush();
+				output.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void documentsubmissionmenu(String studentnumber) {
+		Stage primaryStage = new Stage();
+		
+		File filepath = new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumber);
+		filepath.mkdirs();
+		documentation("0", studentnumber, null);
+		dataretrival(studentnumber);
+		
+		BorderPane border = new BorderPane();
+		
+		GridPane grid = new GridPane();
+		grid.setAlignment(Pos.TOP_LEFT);
+		grid.setHgap(10);
+		grid.setVgap(20);
+		grid.setPadding(new Insets(20, 20, 30, 30));
+		
+		Label name = new Label("Student Name:\t\t" + namedata);
+		grid.add(name, 0, 0);
+		
+		Label address = new Label("Home Address:\t\t" + addressdata);
+		grid.add(address, 0, 1);
+		
+		Label birthday = new Label("Date of Birth:\t\t\t" + birthdaydata);
+		grid.add(birthday, 0, 2);
+		
+		Label email = new Label("Personal Email:\t\t" + emaildata);
+		grid.add(email, 0, 3);
+		
+		Label contactnumber = new Label("Contact Number:\t\t" + contactnumberdata);
+		grid.add(contactnumber, 0, 4);
+		
+		Label firstchoice = new Label("First Course Choice:\t\t" + firstchoicedata);
+		grid.add(firstchoice, 0, 5);
+		
+		Label secondchoice = new Label("Second Course Choice:\t" + secondchoicedata);
+		grid.add(secondchoice, 0, 6);
+		
+		Label aveJHS = new Label("General Ave. for JHS:\t" + aveJHSdata);
+		grid.add(aveJHS, 0, 7);
+		
+		Label aveSHS = new Label("General Ave. for SHS:\t" + aveSHSdata);
+		grid.add(aveSHS, 0, 8);
+		
+		GridPane grid2 = new GridPane();
+		//grid2.setGridLinesVisible(true);
+		grid2.setAlignment(Pos.TOP_LEFT);
+		grid2.setHgap(10);
+		grid2.setVgap(10);
+		grid2.setPadding(new Insets(20, 20, 30, 30));
+		
+		Label birthcert = new Label("Birth Certificate Status:");
+		grid2.add(birthcert, 0, 0);
+		
+		addfile = new Button("Add File");
+		grid2.add(addfile, 0, 1);
+		
+		Label form137 = new Label("Form 137 Status:");
+		grid2.add(form137, 0, 3);
+		
+		addfile2 = new Button("Add File");
+		grid2.add(addfile2, 0, 4);
+		
+		documentation("3", studentnumber, null);
+		grid2.add(birthcertstatus, 1, 0);
+		grid2.add(birthcertname, 1, 1);
+		
+		documentation("4", studentnumber, null);
+		grid2.add(form137status, 1, 3);
+		grid2.add(form137name, 1, 4);
+		
+		addfile.setOnAction(e -> {
+			String filename = getfile(studentnumber);
+			documentation("1", studentnumber, filename);
+			documentation("3", studentnumber, null);
+		});
+		
+		addfile2.setOnAction(e -> {
+			String filename = getfile(studentnumber);
+			documentation("2", studentnumber, filename);
+			documentation("4", studentnumber, null);
+		});
+		
+		border.setLeft(grid);
+		border.setCenter(grid2);
+		
+		if (enrolled == true) {
+			Label givencourse = new Label("Course:\t" + coursegiven);
+			grid2.add(givencourse, 0, 6);
+			Button finish = new Button("Finish");
+			grid2.add(finish, 0, 9);
+
+			finish.setOnAction(e -> {
+				Finalpage.display(coursegiven);
+			});
+		}
+		
+		Scene scene = new Scene(border, 950, 450);
+		primaryStage.setResizable(false);
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("Document Verification Form");
+		primaryStage.show();
+	}
+
+}
