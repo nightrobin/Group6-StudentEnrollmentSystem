@@ -1,0 +1,372 @@
+package application.enrollmentintellij_idea;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Scanner;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import java.awt.Desktop;
+
+public class AdminInterface {
+	static ArrayList<String> studentnumbers = new ArrayList<String>();
+	static ArrayList<String> studentcourses = new ArrayList<String>();
+	static Label name, address, birthday, email, contactnumber, firstchoice, secondchoice, aveJHS, aveSHS;
+	static String firstchoicecourse, secondchoicecourse, birthcertfile, form137file, status1, status2, coursegiven;
+	static Button choice1, choice2, checkbirthcert, checkform137, acceptBtn1, acceptBtn2;
+	
+	public static void compilingstudents() {
+		studentnumbers.clear();
+		studentcourses.clear();
+		try {
+			File file = new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentnumberlist.dat");
+			Scanner scanner = new Scanner(file);
+			while (scanner.hasNext()) {
+				studentnumbers.add(scanner.next());
+				studentcourses.add(scanner.nextLine().stripLeading());
+			};
+			scanner.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	public static void filechecker(String studentnumber) {
+		choice1.setDisable(true);
+		choice2.setDisable(true);
+		acceptBtn1.setDisable(true);
+		acceptBtn2.setDisable(true);
+		checkbirthcert.setDisable(true);
+		checkform137.setDisable(true);
+		if (!studentnumber.equals(null)) {
+			try {
+				File file = new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumber + "\\documentation.dat");
+				Scanner scanner = new Scanner(file);
+				
+				birthcertfile = scanner.nextLine();
+				status1 = scanner.nextLine();
+				form137file = scanner.nextLine();
+				status2 = scanner.nextLine();
+				coursegiven = scanner.nextLine();
+				
+				scanner.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			if (!birthcertfile.equals("null")) {
+				checkbirthcert.setDisable(false);
+				if (!status1.equals("Accepted")) {
+					acceptBtn1.setDisable(false);
+				}
+			}
+			if (!form137file.equals("null")) {
+				checkform137.setDisable(false);
+				if (!status2.equals("Accepted")) {
+					acceptBtn2.setDisable(false);
+				}
+			}
+			if (status1.equals("Accepted") && status2.equals("Accepted")) {
+				if (coursegiven.equals("null")) {
+					choice1.setDisable(false);
+					choice2.setDisable(false);
+				}
+				checkbirthcert.setDisable(false);
+				acceptBtn1.setDisable(true);
+				checkform137.setDisable(false);
+				acceptBtn2.setDisable(true);
+			}
+		}
+	}
+	
+	static public void acceptfile(String studentnumber, int index, String studentcourse) {
+		try {
+			FileWriter filewriter = new FileWriter("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumber + "\\documentation.dat");
+			PrintWriter output = new PrintWriter(filewriter);
+			
+			if (index == 1) {
+				status1 = "Accepted";
+				acceptBtn1.setDisable(true);
+			} else if (index == 2) {
+				status2 = "Accepted";
+				acceptBtn2.setDisable(true);
+			}
+			output.println(birthcertfile);
+			output.println(status1);
+			output.println(form137file);
+			output.println(status2);
+			output.print(studentcourse);
+			
+			if (status1.equals("Accepted") && status2.equals("Accepted") && studentcourse == "null") {
+				choice1.setDisable(false);
+				choice2.setDisable(false);
+			}
+			
+			output.flush();
+			output.close();
+			
+			try {
+				Scanner scanner2 = new Scanner(new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentnumberlist.dat"));
+				String[] tofile = new String[100];
+				int x = 0;
+				
+				while (scanner2.hasNextLine()) {
+					String numbertemp = scanner2.next();
+					String coursetemp = scanner2.nextLine().trim();
+					if (studentnumber.equals(numbertemp)) {
+						tofile[x] = numbertemp + " " + studentcourse;
+					} else {
+						tofile[x] = numbertemp + " " + coursetemp;
+					}
+					x++;
+				}
+				scanner2.close();
+
+				FileWriter filewriter2 = new FileWriter("src\\main\\java\\application\\enrollmentintellij_idea\\studentnumberlist.dat");
+				PrintWriter output2 = new PrintWriter(filewriter2);
+				
+				for (int i = 0; i < tofile.length; i++) {
+					if (tofile[i] != null) {
+						output2.println(tofile[i]);
+					}
+				}
+				
+				output2.flush();
+				output2.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+	}
+	
+	public static void setlabeltonull() {
+		name.setText("Student Name:\t\tnull");
+		
+		address.setText("Home Address:\t\tnull");
+		
+		birthday.setText("Date of Birth:\t\t\tnull");
+
+		email.setText("Personal Email:\t\tnull");
+
+		contactnumber.setText("Contact Number:\t\tnull");
+		
+		firstchoice.setText("First Course Choice:\t\tnull");
+		
+		secondchoice.setText("Second Course Choice:\tnull");
+		
+		aveJHS.setText("General Ave. for JHS:\tnull");
+		
+		aveSHS.setText("General Ave. for SHS:\tnull");
+	}
+	
+	public static void admindisplay() {
+		compilingstudents();
+		Stage primaryStage = new Stage();
+		
+		BorderPane border = new BorderPane();
+		
+		GridPane topgrid = new GridPane();
+		topgrid.setAlignment(Pos.TOP_LEFT);
+		topgrid.setHgap(30);
+		topgrid.setPadding(new Insets(10, 5, 5, 20));
+		
+		Label text1 = new Label("Student Number List: ");
+		topgrid.add(text1, 0, 0);
+		
+		ComboBox<String> studentnumberlist = new ComboBox<>();
+		topgrid.add(studentnumberlist, 1, 0);
+		
+		ComboBox<String> studentcourselist = new ComboBox<>();
+		studentcourselist.getItems().addAll("BS in Civil Engineering", "BS in Computer Engineering", "BS in Electrical Engineering",
+				"BS in Mechanical Engineering", "BS in Nursing", "null");
+		topgrid.add(studentcourselist, 2, 0);
+		
+		studentcourselist.setOnAction(e -> {
+			checkbirthcert.setDisable(true);
+			checkform137.setDisable(true);
+			studentnumberlist.getItems().clear();
+			setlabeltonull();
+			int x = 0;
+			for (String temp: studentcourses) {
+				if (temp.equals(studentcourselist.getValue())) {
+					studentnumberlist.getItems().add(studentnumbers.get(x));
+				}
+				x++;
+			}
+		});
+		
+		GridPane grid = new GridPane();
+		grid.setAlignment(Pos.TOP_LEFT);
+		grid.setHgap(20);
+		grid.setVgap(20);
+		grid.setPadding(new Insets(20, 20, 20, 20));
+		
+		name = new Label("Student Name:\t\tnull");
+		grid.add(name, 0, 0);
+		
+		address = new Label("Home Address:\t\tnull");
+		grid.add(address, 0, 1);
+		
+		birthday = new Label("Date of Birth:\t\t\tnull");
+		grid.add(birthday, 0, 2);
+		
+		email = new Label("Personal Email:\t\tnull");
+		grid.add(email, 0, 3);
+		
+		contactnumber = new Label("Contact Number:\t\tnull");
+		grid.add(contactnumber, 0, 4);
+		
+		firstchoice = new Label("First Course Choice:\t\tnull");
+		grid.add(firstchoice, 0, 5);
+		
+		choice1 = new Button("Confirm Course");
+		choice1.setDisable(true);
+		grid.add(choice1, 1, 5);
+		
+		secondchoice = new Label("Second Course Choice:\tnull");
+		grid.add(secondchoice, 0, 6);
+		
+		choice2 = new Button("Confirm Course");
+		choice2.setDisable(true);
+		grid.add(choice2, 1, 6);
+		
+		choice1.setOnAction(e -> {
+			acceptfile(studentnumberlist.getValue(), 0, firstchoicecourse);
+			firstchoice.setText("Given Course:\t\t" + firstchoicecourse);
+			secondchoice.setText("---");
+			checkbirthcert.setDisable(true);
+			checkform137.setDisable(true);
+			choice1.setDisable(true);
+			choice2.setDisable(true);
+			studentnumberlist.getItems().clear();
+			compilingstudents();
+			setlabeltonull();
+			
+		});
+		
+		choice2.setOnAction(e -> {
+			acceptfile(studentnumberlist.getValue(), 0, secondchoicecourse);
+			firstchoice.setText("---");
+			secondchoice.setText("Given Course:\t\t" + secondchoicecourse);
+			checkbirthcert.setDisable(true);
+			checkform137.setDisable(true);
+			choice1.setDisable(true);
+			choice2.setDisable(true);
+			studentnumberlist.getItems().clear();
+			compilingstudents();
+			setlabeltonull();
+		});
+		
+		aveJHS = new Label("General Ave. for JHS:\tnull");
+		grid.add(aveJHS, 0, 7);
+		
+		aveSHS = new Label("General Ave. for SHS:\tnull");
+		grid.add(aveSHS, 0, 8);
+		
+		checkbirthcert = new Button("Check Birth Certificate");
+		checkbirthcert.setDisable(true);
+		grid.add(checkbirthcert, 1, 0);
+		
+		acceptBtn1 = new Button("Accept Birth Certificate");
+		acceptBtn1.setDisable(true);
+		grid.add(acceptBtn1, 2, 0);
+		
+		checkform137 = new Button("Check Form 137");
+		checkform137.setDisable(true);
+		grid.add(checkform137, 1, 2);
+		
+		acceptBtn2 = new Button("Accept Form 137");
+		acceptBtn2.setDisable(true);
+		grid.add(acceptBtn2, 2, 2);
+		
+		checkbirthcert.setOnAction(e -> {
+			try {
+				File testfile = new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumberlist.getValue() + "\\" + birthcertfile);
+				if (Desktop.isDesktopSupported()) {
+					Desktop.getDesktop().open(testfile);
+				} else {
+					System.out.println("Error");
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
+		
+		acceptBtn1.setOnAction(e -> {
+			acceptfile(studentnumberlist.getValue(), 1, "null");
+		});
+		
+		checkform137.setOnAction(e -> {
+			try {
+				File testfile = new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentfiles\\" + studentnumberlist.getValue() + "\\" + form137file);
+				if (Desktop.isDesktopSupported()) {
+					Desktop.getDesktop().open(testfile);
+				} else {
+					System.out.println("Error");
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
+		
+		acceptBtn2.setOnAction(e -> {
+			acceptfile(studentnumberlist.getValue(), 2, "null");
+		});
+		
+		studentnumberlist.setOnAction(e -> {
+			if (studentnumberlist.getValue() != null) {
+				filechecker(studentnumberlist.getValue());
+				try {
+					File file = new File("src\\main\\java\\application\\enrollmentintellij_idea\\studentdata.dat");
+					Scanner scanner = new Scanner(file);
+					
+					while (scanner.hasNextLine()) {
+						if (studentnumberlist.getValue().equals(scanner.nextLine())) {
+							name.setText("Student Name:\t\t" + scanner.nextLine());
+							address.setText("Home Address:\t\t" + scanner.nextLine());
+							birthday.setText("Date of Birth:\t\t\t" + scanner.nextLine());
+							email.setText("Personal Email:\t\t" + scanner.nextLine());
+							contactnumber.setText("Contact Number:\t\t" + scanner.nextLine());
+							firstchoicecourse = scanner.nextLine();
+							firstchoice.setText("First Course Choice:\t\t" + firstchoicecourse);
+							secondchoicecourse = scanner.nextLine();
+							secondchoice.setText("Second Course Choice:\t" + secondchoicecourse);
+							aveJHS.setText("General Ave. for JHS:\t" + scanner.nextLine());
+							aveSHS.setText("General Ave. for SHS:\t" + scanner.nextLine());
+						}
+					}
+					if (coursegiven.equals(firstchoicecourse) && status1.equals("Accepted") && status2.equals("Accepted")) {
+						firstchoice.setText("Given Course:\t\t" + firstchoicecourse);
+						secondchoice.setText("---");
+					} else if (coursegiven.equals(secondchoicecourse) && status1.equals("Accepted") && status2.equals("Accepted")) {
+						firstchoice.setText("---");
+						secondchoice.setText("Given Course:\t\t" + secondchoicecourse);
+					}
+					scanner.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		border.setTop(topgrid);
+		border.setCenter(grid);
+		
+		Scene scene = new Scene(border, 750, 450);
+		primaryStage.setResizable(false);
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("Admin Interface");
+		primaryStage.show();
+	}
+}
